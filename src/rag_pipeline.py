@@ -2,7 +2,6 @@
 import os
 import requests
 
-
 OLLAMA_CHAT_URL = "http://localhost:11434/api/chat"
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "openai/gpt-oss-20b"
@@ -19,7 +18,9 @@ def get_groq_api_key():
             api_key = None
 
     if not api_key:
-        raise RuntimeError("Groq API key is missing. Configure GROQ_API_KEY in Streamlit Secrets.")
+        raise RuntimeError(
+            "Groq API key is missing. Configure GROQ_API_KEY in Streamlit Secrets."
+        )
 
     return api_key
 
@@ -58,11 +59,11 @@ USER QUESTION:
 
     provider = os.getenv("LLM_PROVIDER", "ollama").lower()
 
-try:
-    import streamlit as st
-    provider = st.secrets.get("LLM_PROVIDER", provider).lower()
-except Exception:
-    pass
+    try:
+        import streamlit as st
+        provider = st.secrets.get("LLM_PROVIDER", provider).lower()
+    except Exception:
+        pass
 
     try:
         if provider == "groq":
@@ -95,7 +96,9 @@ except Exception:
             OLLAMA_CHAT_URL,
             json={
                 "model": model,
-                "messages": [{"role": "user", "content": prompt}],
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
                 "stream": False,
                 "options": {"temperature": 0.1}
             },
@@ -111,14 +114,18 @@ except Exception:
 
     except requests.exceptions.ConnectionError as exc:
         if provider == "groq":
-            raise RuntimeError("Cannot connect to Groq API. Check your internet connection.") from exc
+            raise RuntimeError(
+                "Cannot connect to Groq API. Check your internet connection."
+            ) from exc
 
         raise RuntimeError(
             "Cannot connect to Ollama. Start Ollama and try again."
         ) from exc
 
     except requests.exceptions.Timeout as exc:
-        raise RuntimeError("The AI model took too long to respond. Try again.") from exc
+        raise RuntimeError(
+            "The AI model took too long to respond. Try again."
+        ) from exc
 
     except requests.exceptions.HTTPError as exc:
         detail = ""
