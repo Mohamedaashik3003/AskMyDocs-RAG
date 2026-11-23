@@ -58,6 +58,12 @@ USER QUESTION:
 
     provider = os.getenv("LLM_PROVIDER", "ollama").lower()
 
+try:
+    import streamlit as st
+    provider = st.secrets.get("LLM_PROVIDER", provider).lower()
+except Exception:
+    pass
+
     try:
         if provider == "groq":
             api_key = get_groq_api_key()
